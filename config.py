@@ -1,6 +1,7 @@
-URL_API = "http://127.0.0.1:8000/ativos"
-ARQUIVO_TXT = "banco_ativos.txt"
+import os
 
+URL_API = os.getenv("CRUD_URL_API", "http://127.0.0.1:8000/ativos")
+ARQUIVO_TXT = "banco_ativos.txt"
 COR_FUNDO = "#1a001f"
 COR_PAINEL = "#2b0033"
 COR_VIOLETA = "#6a0dad"

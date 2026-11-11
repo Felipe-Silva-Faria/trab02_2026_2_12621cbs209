@@ -1,5 +1,6 @@
 .venv/
 .git/
+.github/
 .idea/
 __pycache__/
 *.pyc
@@ -13,3 +14,4 @@ dependencias.json
 usuarios.json
 preferencias_interface.json
 .env
+evidencia_*.txt

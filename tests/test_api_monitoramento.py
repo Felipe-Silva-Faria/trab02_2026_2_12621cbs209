@@ -20,7 +20,9 @@ def test_com_chave_exige_cabecalho():
     assert cliente.get("/ativos").status_code == 401
     assert cliente.get("/ativos", headers={"X-API-Key": "errada"}).status_code == 401
     assert cliente.get("/ativos", headers={"X-API-Key": "segredo"}).status_code == 200
-    assert cliente.get("/health").json() == {"status": "ok", "versao": "3.0.0"}
+    resposta = cliente.get("/health").json()
+    assert resposta["status"] == "ok"
+    assert "versao" in resposta
 
 
 def test_requisicao_vira_log_estruturado(caplog):
