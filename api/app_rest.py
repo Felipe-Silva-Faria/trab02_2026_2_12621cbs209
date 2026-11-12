@@ -2,15 +2,18 @@ import hmac
 import logging
 import os
 import time
+
 from fastapi import FastAPI, Query, Request, Response, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator, model_validator
+
 from algoritmos.cvss import calcular_cvss, nota_de_rotulo_legado
 from dominio.excecoes import AtivoNaoEncontrado, ErroPersistencia, ErroValidacao
 from persistencia.repositorio import RepositorioJsonLines, RepositorioMemoria, RepositorioSQLite
 from servicos.servico_ativos import CHAVES_ORDENACAO, ServicoAtivos
 from utilitarios.auditoria import ativar_log_json, evento_seguranca
 from utilitarios.funcional import por_cvss_minimo, por_severidade_minima, por_texto, por_tipo
+
 logger = logging.getLogger("api.app_rest")
 VERSAO_API = os.getenv("CRUD_VERSAO", "5.0.0")
 class VulnerabilidadeEntrada(BaseModel):
