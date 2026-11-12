@@ -1,16 +1,18 @@
+name: trab02_2026_2_12621cbs209
+
 services:
   api:
     build:
       context: .
       target: producao
-    image: crud-ativos-api:3.0
-    container_name: crud-ativos-api
+    image: trab02_2026_2_12621cbs209:5.0
+    container_name: trab02_2026_2_12621cbs209
     ports:
-      - "127.0.0.1:8000:8000"
+      - "2209:8000"
     environment:
-      CRUD_API_KEY: ${CRUD_API_KEY:-}
+      CRUD_API_KEY: ${CRUD_API_KEY:?defina CRUD_API_KEY no arquivo .env}
     volumes:
-      - dados:/app/dados
+      - data:/app/data
       - logs:/app/logs
     read_only: true
     tmpfs:
@@ -26,6 +28,7 @@ services:
     build:
       context: .
       target: testes
+    image: trab02_2026_2_12621cbs209:testes
     profiles: ["ferramentas"]
     command: ["python", "-m", "analise.benchmark"]
     volumes:
@@ -35,8 +38,11 @@ services:
     build:
       context: .
       target: testes
+    image: trab02_2026_2_12621cbs209:testes
     profiles: ["testes"]
 
 volumes:
-  dados:
+  data:
+    name: trab02_2026_2_12621cbs209_data
   logs:
+    name: trab02_2026_2_12621cbs209_logs
