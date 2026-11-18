@@ -17,3 +17,5 @@ preferencias_interface.json
 *.db
 .env
 evidencia_*.txt
+data/*
+!data/README.md

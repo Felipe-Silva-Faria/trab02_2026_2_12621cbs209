@@ -15,3 +15,7 @@ usuarios.json
 preferencias_interface.json
 .env
 evidencia_*.txt
+data/
+evidencias/
+scripts/
+docs/
