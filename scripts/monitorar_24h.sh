@@ -10,7 +10,7 @@ AMOSTRAS="${AMOSTRAS:-49}"
 
 RAIZ="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$RAIZ/evidencias"
-ARQ="$RAIZ/evidencias/monitor_$(date +%Y%m%d_%H%M%S).log"
+ARQ="$RAIZ/evidencias/monitor_$(date +%Y%m%d_%H%M%S)_a${AMOSTRAS}_$$.log"
 
 echo "# $ID | host=$(hostname 2>/dev/null || uname -n) | inicio=$(date -Is) | amostras=$AMOSTRAS | intervalo=${INTERVALO}s" | tee -a "$ARQ"
 
