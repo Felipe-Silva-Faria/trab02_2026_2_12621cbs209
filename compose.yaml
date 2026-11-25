@@ -1,0 +1,71 @@
+name: trab02_2026_2_12621cbs209
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  api:
+    build:
+      context: .
+      target: producao
+    image: trab02_2026_2_12621cbs209:5.0
+    container_name: trab02_2026_2_12621cbs209
+    labels:
+      br.ufu.trabalho: "trab02"
+      br.ufu.identificador: "trab02_2026_2_12621cbs209"
+    ports:
+      - "2209:8000"
+    environment:
+      CRUD_API_KEY: ${CRUD_API_KEY:?defina CRUD_API_KEY no arquivo .env}
+    volumes:
+      - data:/app/data
+      - logs:/app/logs
+    networks:
+      - rede
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 100
+    logging: *logging
+    restart: unless-stopped
+
+  benchmark:
+    build:
+      context: .
+      target: testes
+    image: trab02_2026_2_12621cbs209:testes
+    profiles: ["ferramentas"]
+    command: ["python", "-m", "analise.benchmark"]
+    volumes:
+      - ./analise:/app/analise:ro
+    networks:
+      - rede
+    logging: *logging
+
+  testes:
+    build:
+      context: .
+      target: testes
+    image: trab02_2026_2_12621cbs209:testes
+    profiles: ["testes"]
+    networks:
+      - rede
+    logging: *logging
+
+networks:
+  rede:
+    name: trab02_2026_2_12621cbs209_net
+
+volumes:
+  data:
+    name: trab02_2026_2_12621cbs209_data
+  logs:
+    name: trab02_2026_2_12621cbs209_logs

@@ -1,9 +1,10 @@
 import logging
+import os
 from dataclasses import dataclass, field
 
 import requests
 
-from config import ARQUIVO_TXT, URL_API
+from config import ARQUIVO_TXT, URL_API, normalizar_url_api
 from dominio.entidades import criar_ativo
 from dominio.excecoes import ApiIndisponivel, AtivoNaoEncontrado, ErroCRUD
 from estruturas.fila import Fila
@@ -12,8 +13,11 @@ from servicos.servico_ativos import ServicoAtivos
 from utilitarios.funcional import tentar_novamente
 
 logger = logging.getLogger(__name__)
-
 ERROS_DE_REDE = (requests.ConnectionError, requests.Timeout)
+
+
+class ChaveRecusada(ErroCRUD):
+    pass
 
 
 @dataclass
@@ -29,9 +33,12 @@ def _sucesso(resposta):
 
 class ClienteAPI:
     def __init__(self, url=URL_API, sessao=None, timeout=3, arquivo_local=ARQUIVO_TXT,
-                 ao_mudar_conexao=None, tentativas=2):
-        self.url = url.rstrip("/")
+                 ao_mudar_conexao=None, tentativas=2, chave_api=None):
+        self.url = normalizar_url_api(url)
         self.sessao = sessao or requests.Session()
+        chave = (os.getenv("CRUD_API_KEY", "") if chave_api is None else chave_api).strip()
+        if chave:
+            self.sessao.headers["X-API-Key"] = chave
         self.timeout = timeout
         self._cache = RepositorioJsonLines(arquivo_local)
         self.local = ServicoAtivos(self._cache)
@@ -53,6 +60,10 @@ class ClienteAPI:
             self._definir_online(False)
             raise ApiIndisponivel(f"HTTP {resposta.status_code}")
         self._definir_online(True)
+        if resposta.status_code in (401, 403):
+            raise ChaveRecusada(
+                f"A API em {self.url} recusou a chave (HTTP {resposta.status_code}). "
+                "Defina CRUD_API_KEY neste terminal com a chave do .env da maquina onde a API roda.")
         return resposta
 
     def _definir_online(self, online):
@@ -67,6 +78,9 @@ class ClienteAPI:
                 self.sincronizar()
             resposta = self._chamar("GET")
             dados = resposta.json()
+            if not isinstance(dados, list):
+                raise ErroCRUD(f"Resposta inesperada de {self.url} (HTTP {resposta.status_code}). "
+                               "Confira CRUD_URL_API: use http://HOST:PORTA/ativos.")
             self._cache.substituir_tudo([criar_ativo(d) for d in dados])
             return dados
         except ApiIndisponivel:
