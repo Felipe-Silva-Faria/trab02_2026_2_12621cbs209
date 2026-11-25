@@ -65,7 +65,7 @@ docker compose ps
 curl.exe http://localhost:2209/health
 ```
 
-Documentação interativa: `http://HOST:2209/docs` → botão **Authorize** → informe a chave do `.env`.
+Documentação interativa: `http://10.0.99.150:2209/docs` → botão **Authorize** → informe a chave do `.env`.
 Todas as rotas da API exigem o cabeçalho `X-API-Key`; ficam liberadas apenas `/health`, `/docs`, `/redoc` e `/openapi.json`.
 Sem `CRUD_API_KEY` definida, o Compose se recusa a subir o serviço.
 
@@ -127,7 +127,7 @@ Os registros ficam em `evidencias/`. Roteiro completo em `docs/EVIDENCIAS_S5.md`
 ## Interface gráfica (opcional, no computador do usuário)
 
 ```powershell
-$env:CRUD_URL_API = "http://IP_DO_SERVIDOR:2209/ativos"
+$env:CRUD_URL_API = "http://10.0.99.150:2209/ativos"
 $env:CRUD_API_KEY = "mesma chave do servidor"
 python main.py
 ```

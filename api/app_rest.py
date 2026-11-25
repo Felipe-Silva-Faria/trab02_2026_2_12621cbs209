@@ -19,10 +19,8 @@ logger = logging.getLogger("api.app_rest")
 
 VERSAO_API = os.getenv("CRUD_VERSAO", "5.0.0")
 
-# S5: rotas liberadas sem chave (saude e documentacao)
 ROTAS_PUBLICAS = frozenset({"/", "/health", "/docs", "/docs/oauth2-redirect", "/openapi.json", "/redoc"})
 
-# S5: botao "Authorize" no /docs envia o X-API-Key
 ESQUEMA_CHAVE = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 
@@ -114,7 +112,9 @@ def repositorio_padrao():
 
 def criar_app(servico=None, chave_api=None):
     servico = servico or ServicoAtivos(repositorio_padrao())
-    chave_api = os.getenv("CRUD_API_KEY", "") if chave_api is None else chave_api
+    chave_api = (os.getenv("CRUD_API_KEY", "") if chave_api is None else chave_api).strip()
+    if not chave_api:
+        logger.warning("CRUD_API_KEY vazia: API sem protecao por chave (use so em desenvolvimento)")
     app = FastAPI(title="CRUD Ativos de TI", version=VERSAO_API, dependencies=[Depends(ESQUEMA_CHAVE)])
 
     @app.middleware("http")

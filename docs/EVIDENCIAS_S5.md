@@ -22,7 +22,7 @@ Porta externa: 2000 + 209 = **2209** → porta interna **8000**
 | Porta livre antes do deploy | `ss -ltn \| grep ':2209 '` | |
 | Deploy | `docker compose up -d --build` | |
 | Container saudável | `docker compose ps` | |
-| Acesso externo | `http://SERVIDOR:2209/health` | |
+| Acesso externo | `http://10.0.99.150:2209/health` | |
 
 ## 3. Funcionamento por 24 h
 
