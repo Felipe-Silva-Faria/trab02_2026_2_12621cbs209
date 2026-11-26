@@ -22,7 +22,11 @@ def _mostrar_erro(erro):
 
 
 def pegar_ativos():
-    return cliente.listar()
+    try:
+        return cliente.listar()
+    except ErroCRUD as erro:
+        _mostrar_erro(erro)
+        return []
 
 
 def mandar_ativo(dados):
